@@ -51,119 +51,9 @@ public class Main {
 
         System.out.println("The top ranked page is "+ maxIndex + " with the value " + maxValue);
     }
-    public static double[] calculatePageRank(int[][] graph, double dampingFactor, int maxIterations) {
-
-        // All the calculations are done using the formula from this video
-        // https://www.youtube.com/watch?v=CsvyPNdQAHg&ab_channel=AbdulBari
-        // 11:54 for the full formula
-
-        int numVertices = graph.length;
-        double[] pageRanks = new double[numVertices];
-        double[] newPageRanks = new double[numVertices];
-
-        // Initialize PageRanks
-        for (int i = 0; i < numVertices; i++) {
-            pageRanks[i] = 1.0 / numVertices;
-        }
-
-        // Perform iterations
-        for (int iteration = 0; iteration < maxIterations; iteration++) {
-            for (int i = 0; i < numVertices; i++) {
-                double sum = 0.0;
-
-                for (int j = 0; j < numVertices; j++) {
-                    if (graph[j][i] != 0) {
-                        sum += pageRanks[j] / countOutgoingLinks(graph, j);
-                    }
-                }
-
-                newPageRanks[i] = (1 - dampingFactor) / numVertices + dampingFactor * sum;
-            }
-
-            // Update PageRanks for the next iteration
-            pageRanks = newPageRanks;
-        }
-
-        return pageRanks;
-    }
-    public static double[] calculatePageRankParallel(int[][] graph, double dampingFactor, int maxIterations) {
-        int numVertices = graph.length;
-        double[] pageRanks = new double[numVertices];
-        double[] newPageRanks = new double[numVertices];
-
-        // Initialize PageRanks
-        for (int i = 0; i < numVertices; i++) {
-            pageRanks[i] = 1.0 / numVertices;
-        }
-
-        // Perform iterations
-        for (int iteration = 0; iteration < maxIterations; iteration++) {
-            final double[] finalPageRanks = pageRanks.clone();
-            Thread[] threads = new Thread[numVertices];
-            for (int i = 0; i < numVertices; i++) {
-                final int vertex = i;
-                threads[i] = new Thread(() -> {
-                    double sum = 0.0;
-                    for (int j = 0; j < numVertices; j++) {
-                        if (graph[j][vertex] != 0) {
-                            sum += finalPageRanks[j] / countOutgoingLinks(graph, j);
-                        }
-                    }
-                    newPageRanks[vertex] = (1 - dampingFactor) / numVertices + dampingFactor * sum;
-                });
-                threads[i].start();
-            }
-
-            // Wait for all threads to finish
-            for (Thread thread : threads) {
-                try {
-                    thread.join();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            // Update PageRanks for the next iteration
-            pageRanks = newPageRanks;
-        }
-
-        return pageRanks;
-    }
-
-    public static double[] calculatePageRankDistributive(int[][] graph, double dampingFactor, int maxIterations) throws MPIException {
-        int numVertices = graph.length;
-        double[] pageRanks = new double[numVertices];
-        double[] newPageRanks = new double[numVertices];
-
-        // Initialize PageRanks
-        for (int i = 0; i < numVertices; i++) {
-            pageRanks[i] = 1.0 / numVertices;
-        }
-
-        // Get the rank of the current process
-        int rank = MPI.COMM_WORLD.Rank();
-
-        // Perform iterations
-        for (int iteration = 0; iteration < maxIterations; iteration++) {
-            double sum = 0.0;
-            for (int j = 0; j < numVertices; j++) {
-                if (graph[j][rank] != 0) {
-                    sum += pageRanks[j] / countOutgoingLinks(graph, j);
-                }
-            }
-            newPageRanks[rank] = (1 - dampingFactor) / numVertices + dampingFactor * sum;
-            // Gather the new PageRanks from all processes
-            MPI.COMM_WORLD.Allgather(newPageRanks, rank, 1, MPI.DOUBLE, pageRanks, 0, numVertices, MPI.DOUBLE);
-
-            // Update PageRanks for the next iteration
-            pageRanks = newPageRanks;
-        }
-
-        return pageRanks;
-    }
 
 
-    private static int countOutgoingLinks(int[][] graph, int vertex) {
+    public static int countOutgoingLinks(int[][] graph, int vertex) {
         int count = 0;
         for (int i = 0; i < graph[vertex].length; i++) {
             if (graph[vertex][i] != 0) {
@@ -201,48 +91,42 @@ public class Main {
     }
 
     public static void main(String[] args) throws MPIException {
-
-        // Initialize the MPI environment
-        MPI.Init(args);
-
-        // Getting user input
-        Scanner scan = new Scanner(System.in);
-        double dampingFac;
-        int maxNumOfIter, numOfEdges, numOfVertices, mode;
-        System.out.print("Enter the damping factor for this instance: ");
-        dampingFac = scan.nextDouble();
-        System.out.print("Enter the maximum number of iterations for this instance: ");
-        maxNumOfIter = scan.nextInt();
-        System.out.print("Enter the number of edges for this instance: ");
-        numOfEdges = scan.nextInt();
-        System.out.print("Enter the number of vertices for this instance: ");
-        numOfVertices = scan.nextInt();
-        System.out.print("Enter the mode for this instance (1 for sequential, 2 for parallel, 3 for distributive): ");
-        mode = scan.nextInt();
-
-        // for the log
-        long start_time = System.currentTimeMillis();
+        /*
+        if (args.length != 5) {
+            System.out.println("Usage: java Main <dampingFactor> <maxIterations> <numEdges> <numVertices> <mode>");
+            System.exit(1);
+        }
+        double dampingFac = Double.parseDouble(args[0]);
+        int maxNumOfIter = Integer.parseInt(args[1]);
+        int numOfEdges = Integer.parseInt(args[2]);
+        int numOfVertices = Integer.parseInt(args[3]);
+        int mode = Integer.parseInt(args[4]);
+        */
+        double dampingFac = 0.85;
+        int maxNumOfIter = 100;
+        int numOfEdges = 500;
+        int numOfVertices = 1000;
+        int mode = 3;
         // Make the graph
+        long start_time = System.currentTimeMillis();
         int[][] graph = generateRandomGraph(numOfVertices, numOfEdges);
         printGraph(graph);
 
         // Calling the function
         double[] pageRanks;
         if (mode == 1) {
-            pageRanks = calculatePageRank(graph, dampingFac, maxNumOfIter);
+            pageRanks = SequentialPageRank.calculatePageRank(graph, dampingFac, maxNumOfIter);
         } else if (mode == 2) {
-            pageRanks = calculatePageRankParallel(graph, dampingFac, maxNumOfIter);
+            pageRanks = ParallelPageRank.calculatePageRankParallel(graph, dampingFac, maxNumOfIter);
         } else if (mode == 3) {
-            pageRanks = calculatePageRankDistributive(graph, dampingFac, maxNumOfIter);
+            pageRanks = DistributivePageRank.calculatePageRankDistributive(graph, dampingFac, maxNumOfIter, args);
         } else {
             throw new IllegalArgumentException("Invalid mode. Enter 1 for sequential, 2 for parallel, 3 for distributive.");
         }
-
         System.out.println("\nPage Ranks:");
         for (int i = 0; i < numOfVertices; i++) {
             System.out.println("Page " + i + ": " + pageRanks[i]);
         }
-
         findMaxIndex(pageRanks);
 
         // Write the graph to a CSV file
@@ -254,9 +138,6 @@ public class Main {
         long elapsed_time = end_time - start_time;
 
         System.out.println("The elapsed for the program: "+ elapsed_time + " milliseconds ");
-
-        // Finalize the MPI environment
-        MPI.Finalize();
     }
 
 }
