@@ -7,6 +7,7 @@ public class DistributivePageRank {
         int numVertices = graph.length;
         double[] pageRanks = new double[numVertices];
         double[] newPageRanks = new double[numVertices];
+        double[] allNewPageRanks = new double[numVertices * MPI.COMM_WORLD.Size()];
 
         // Initialize PageRanks
         for (int i = 0; i < numVertices; i++) {
@@ -15,6 +16,7 @@ public class DistributivePageRank {
 
         // Get the rank of the current process
         int rank = MPI.COMM_WORLD.Rank();
+        int size = MPI.COMM_WORLD.Size();
 
         // Perform iterations
         for (int iteration = 0; iteration < maxIterations; iteration++) {
@@ -25,12 +27,16 @@ public class DistributivePageRank {
                 }
             }
             newPageRanks[rank] = (1 - dampingFactor) / numVertices + dampingFactor * sum;
+
             // Gather the new PageRanks from all processes
-            MPI.COMM_WORLD.Allgather(newPageRanks, rank, 1, MPI.DOUBLE, pageRanks, 0, numVertices, MPI.DOUBLE);
+            MPI.COMM_WORLD.Allgather(newPageRanks, rank, 1, MPI.DOUBLE, allNewPageRanks, 0, 1, MPI.DOUBLE);
 
             // Update PageRanks for the next iteration
-            pageRanks = newPageRanks;
+            for (int i = 0; i < size; i++) {
+                pageRanks[i] = allNewPageRanks[i];
+            }
         }
+
         MPI.Finalize();
         return pageRanks;
     }

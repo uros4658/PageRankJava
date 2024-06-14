@@ -103,14 +103,13 @@ public class Main {
         int mode = Integer.parseInt(args[4]);
         */
         double dampingFac = 0.85;
-        int maxNumOfIter = 100;
-        int numOfEdges = 500;
-        int numOfVertices = 1000;
-        int mode = 3;
+        int maxNumOfIter = 5;
+        int numOfEdges = 20000;
+        int numOfVertices = 4000;
+        int mode = 1;
         // Make the graph
         long start_time = System.currentTimeMillis();
         int[][] graph = generateRandomGraph(numOfVertices, numOfEdges);
-        printGraph(graph);
 
         // Calling the function
         double[] pageRanks;

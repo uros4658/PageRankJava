@@ -1,0 +1,128 @@
+Test data for prog3
+1.
+Num of edges: 30
+Num of vertices: 7
+Sequential: 44, 41, 36
+Parallel: 55, 61, 63
+Distributive: 216,224,221
+2.
+Num of edges: 60
+Num of vertices: 15
+Sequential: 48, 41, 50
+Parallel: 68, 60, 65
+Distributive: 231, 227, 220
+3.
+Num of edges: 120
+Num of vertices: 30
+Sequential: 65, 61, 56
+Parallel: 106, 110, 113
+Distributive: 232, 241, 239
+4.
+Num of edges: 280
+Num of vertices: 60
+Sequential: 128, 125, 119
+Parallel: 213, 216, 220
+Distributive: 328, 331, 324
+5.
+Num of edges: 560
+Num of vertices: 120
+Sequential: 289, 286, 281
+Parallel: 436, 438, 431
+Distributive: 498, 491, 496
+6.
+Num of edges: 1080
+Num of vertices: 240
+Sequential: 700, 697, 691
+Parallel: 953, 962, 958
+Distributive: 929, 925, 921
+7.
+Num of edges: 3000
+Num of vertices: 600
+Sequential: 2613, 2650, 2647
+Parallel: 3227, 3224, 3219
+Distributive: 2761, 2764, 2753
+8.
+Num of edges: 10000
+Num of vertices: 2000
+Sequential: 23789, 24005, 24017
+Parallel: 26316, 26252, 26132
+Distributive: 24472, 24486, 24485
+9.
+Num of edges: 20000
+Num of vertices: 4000
+Sequential: 93927, 93824, 93811
+Parallel: 92906, 95737, 95764
+Distributive: 93412, 93420, 93398
+
+After I deleted the printgraph:
+
+1.
+Num of edges: 30
+Num of vertices: 7
+Sequential: 30, 27, 21
+Parallel: 42, 36, 45
+Distributive: 210, 203, 208
+
+2.
+Num of edges: 60
+Num of vertices: 15
+Sequential: 33, 35, 29
+Parallel: 45, 52, 51
+Distributive: 211, 214, 206
+
+3.
+Num of edges: 120
+Num of vertices: 30
+Sequential: 28, 37, 34
+Parallel: 71, 74, 79
+Distributive: 203, 212, 208
+
+4.
+Num of edges: 280
+Num of vertices: 60
+Sequential: 42, 35, 35
+Parallel: 123, 120, 114
+Distributive: 211, 215, 217
+
+5.
+Num of edges: 560
+Num of vertices: 120
+Sequential: 51, 55, 57
+Parallel: 194, 200, 202
+Distributive: 224, 218 , 225
+
+
+6.
+Num of edges: 1080
+Num of vertices: 240
+Sequential: 73, 71, 66
+Parallel: 367, 362, 369
+Distributive: 236, 245, 241
+
+7.
+Num of edges: 3000
+Num of vertices: 600
+Sequential: 135, 133, 128
+Parallel: 838, 847, 846
+Distributive: 256, 252, 258
+
+8.
+Num of edges: 10000
+Num of vertices: 2000
+Sequential: 461, 459, 455
+Parallel: 2666, 2680, 2679
+Distributive: 378, 355, 371
+
+9.
+Num of edges: 20000
+Num of vertices: 4000
+Sequential: 1790, 1791, 1823
+Parallel: 5675, 5701, 5760 
+Distributive: 586, 599, 601
+
+10.
+Num of edges: 50000
+Num of vertices: 2000
+Sequential: 990, 1006, 1019
+Parallel: 2756, 2815, 2789
+Distributive: 489, 491, 474
